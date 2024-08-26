@@ -1,0 +1,34 @@
+module tb_lfsr_rng();
+
+    reg clk;
+    reg rst;
+    reg load_seed;
+    reg [15:0] seed;
+    wire [15:0] random_number;
+
+    lfsr_rng uut (
+        .clk(clk),
+        .rst(rst),
+        .load_seed(load_seed),
+        .seed(seed),
+        .random_number(random_number)
+    );
+
+    initial begin
+        clk = 0;
+        rst = 1;
+        load_seed = 0;
+        seed = 16'hABCD;
+
+        #10 rst = 0;
+        #10 load_seed = 1;
+        #10 load_seed = 0;
+
+        // Simulate for a while to observe random numbers
+        #100;
+        $finish;
+    end
+
+    always #5 clk = ~clk;
+
+endmodule
