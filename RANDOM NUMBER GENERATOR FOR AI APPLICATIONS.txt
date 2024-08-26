@@ -1,0 +1,32 @@
+module lfsr_rng (
+    input wire clk,
+    input wire rst,
+    input wire load_seed,
+    input wire [15:0] seed,    // Seed value for initialization
+    output reg [15:0] random_number // Generated random number
+);
+
+    reg [15:0] lfsr;
+    wire feedback;
+
+    // Define the feedback polynomial (example: x^16 + x^14 + x^13 + x^11 + 1)
+    assign feedback = lfsr[15] ^ lfsr[13] ^ lfsr[12] ^ lfsr[10];
+
+    // LFSR operation
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            lfsr <= 16'h1;  // Initial seed or default value
+            random_number <= 16'h0;
+        end else if (load_seed) begin
+            lfsr <= seed;
+        end else begin
+            lfsr <= {lfsr[14:0], feedback};
+        end
+    end
+
+    // Output the random number
+    always @(posedge clk) begin
+        random_number <= lfsr;
+    end
+
+endmodule
